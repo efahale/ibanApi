@@ -7,21 +7,6 @@ import (
 
 const IbanMaxLength = 34
 
-type countryIbanInfo struct {
-    countryCode string
-    length  int
-}
-
-func getCountriesIbanInfo() map[string]countryIbanInfo {
-	countriesIbanInfo := []countryIbanInfo{{"AL", 28}, {"AD", 24}}
-	m := make(map[string]countryIbanInfo)
-
-	for _, countryIbanInfo := range countriesIbanInfo {
-        m[countryIbanInfo.countryCode] = countryIbanInfo
-    }
-	return m
-}
-
 func validateIban(iban string) error {
 	//order is important!!!
 	validationFuncs := [](func(string) error){
