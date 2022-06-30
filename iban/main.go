@@ -16,9 +16,9 @@ func initApi() {
 }
 
 func ibanEndpoint(c *gin.Context) {
-	if validateIban(c.Param("iban")) {
+	if err := validateIban(c.Param("iban")); err == nil {
 		c.Status(http.StatusOK)
 	} else {
-		c.Status(http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{ "error": err.Error() })
 	}
 }
