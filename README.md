@@ -1,8 +1,8 @@
 # ibanApi
-exposes one endpoint /iban/:iban where :iban must be replaced with the IBAN number one wants to validate. IBAN number to vlidate must be without whitespaces.
+exposes one endpoint /iban/:iban where :iban must be replaced with the IBAN number one wants to validate. IBAN number to validate must be without whitespaces.
 - Valid IBAN number gives 200 OK success status response code and empty body
-- Invalid IBAN number gives 400 status reponse code and body contains an error message in json format
-- Invalid endpoint gives 404 status response code
+- Invalid IBAN number gives 400 Bad Request status reponse code and body contains an error message in json format
+- Invalid endpoint gives 404 Not Found status response code
 
 ## Contents
 - [What is checked]("what-is-checked)
@@ -21,6 +21,7 @@ The validation of IBAN number is done with info found from [Wikipedia](https://e
 - Have correct number of characters for the specified country
 - The check digit are digits
 > List of Iban Countries and length of the IBAN number was collected from [iban.com](https://www.iban.com/structure)
+> Iban Countries data is stored in json format in [iban_countries_info.json](iban/iban_countries_info.json)
 
 ## Requirement
 To build and run [Docker](https://docs.docker.com/get-docker/) is recommended
@@ -73,4 +74,3 @@ $ curl http://localhost/iban/AL472121100900000q0235698741
 ## Improvements
 - Add digit check described on [Wikipedia](https://en.wikipedia.org/wiki/International_Bank_Account_Number#Algorithms)
 - Add checks for BBAN format specified for the country code
-- Move info on Iban Countries to a config file and read it at startup
