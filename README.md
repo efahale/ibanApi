@@ -19,7 +19,7 @@ The validation of IBAN number is done with info found from [Wikipedia](https://e
 - Have at least 4 character
 - The first 2 characters are correct iban country code
 - Have correct number of characters for the specified country
-- The check digit are digits
+- The check digit are digits and validate with digit check
 > List of Iban Countries and length of the IBAN number was collected from [iban.com](https://www.iban.com/structure).
 > Iban Countries data is stored in json format in [iban_countries_info.json](iban/iban_countries_info.json)
 
@@ -71,6 +71,11 @@ $ curl http://localhost/iban/AL472121100900000q0235698741
 ```
 > Returns 400 Bad Request with body {"error":"iban does contain invalid characters"}
 
+An invalid IBAN number due to check digits
+```sh
+$ curl http://localhost/iban/AL47212110090000000235698714
+```
+> Returns 400 Bad Request with body {"error":"iban is invalid according to check digits"}
+
 ## Improvements
-- Add digit check described on [Wikipedia](https://en.wikipedia.org/wiki/International_Bank_Account_Number#Algorithms)
 - Add checks for BBAN format specified for the country code

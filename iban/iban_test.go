@@ -74,18 +74,35 @@ func TestCheckIbanHasValidChar(t *testing.T) {
 	}	
 }
 
+func TestMoveFirst4char2Last(t *testing.T) {
+	want := "56781234"
+	got := moveFirst4char2Last("12345678")
+	if want != got {
+		t.Errorf("Wanted %q, got %q", want, got)
+	}
+}
+
+func TestReplaceLetterWithNumber(t *testing.T) {
+	want := "101110111256"
+	got := replaceLetterWithNumber("1011ABC56")
+	if want != got {
+		t.Errorf("Wanted %q, got %q", want, got)
+	}
+}
+
 func TestValidateIban(t *testing.T) {
 	validIbans := []string{"AD1400080001001234567890", "AL47212110090000000235698741"} 
 	for _, iban := range validIbans {
 		if got := validateIban(iban); got != nil {
-			t.Errorf("valid iban %q didn't pass validation", iban)	
+			t.Errorf("valid iban %q didn't pass validation (%q)", iban, got)
 		}
 	}
 
 	inValidIbans := []string{"AL", "", "AL12", 
 	"AL4V212110090000000235698741",
 	"ALQ7212110090000000235698741",
-	"AL4721211009000000p235698741"}
+	"AL4721211009000000p235698741",
+	"AD1400080001001234567809"}
 
 	for _, iban := range inValidIbans {
 		if got := validateIban(iban); got == nil {

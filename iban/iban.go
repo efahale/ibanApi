@@ -3,9 +3,18 @@ package main
 import (
 	"errors"
 	"strconv"
+	"unicode"
+	"bytes"
+	"math/big"
 )
 
 const IbanMaxLength = 34
+const MapLetter2DigitRef = 55
+const (
+	Modulus = 97
+	CorrectRemainder = 1
+	Base = 10
+)
 
 func validateIban(iban string) error {
 	//order is important!!!
@@ -15,7 +24,8 @@ func validateIban(iban string) error {
 		checkIbanCountryCode,
 		checkIbanCorrectLength,
 		checkIbanCheckDigitAreDigits,
-		checkIbanHasValidChar}
+		checkIbanHasValidChar,
+		checkIbanWithCheckDigits}
 
 	for _, fun := range validationFuncs {
 		if err := fun(iban); err != nil {
@@ -75,8 +85,43 @@ func checkIbanHasValidChar(iban string) error {
     return nil
 }
 
+func checkIbanWithCheckDigits(iban string) error {
+	number, ok := new(big.Int).SetString(replaceLetterWithNumber(moveFirst4char2Last(iban)), Base)
+	if !ok {
+		return errors.New("Convert string to big.Int failed when validating iban with check digit")
+	}
+
+	remainder := new(big.Int)
+	if remainder.Mod(number, big.NewInt(Modulus)).Cmp(big.NewInt(CorrectRemainder)) != 0 {
+		return errors.New("iban is invalid according to check digits")
+	}
+	return nil
+}
+
+func moveFirst4char2Last(iban string) string {
+	return iban[4:] + iban[0:4]
+}
+
+func replaceLetterWithNumber(str string) string {
+	var buffer bytes.Buffer
+
+	for _, c := range str {
+		if unicode.IsUpper(c) {
+			buffer.WriteString(mapLetter2Digits(c))
+		} else {
+			buffer.WriteString(string(c))
+		}
+	}
+	return buffer.String()
+}
+
+// A -> 10, B -> 11, C -> 12, ..., Y -> 34, Z -> 35
+func mapLetter2Digits(letter rune) string {
+	return strconv.Itoa(int(letter) - MapLetter2DigitRef)
+}
+
 func isValidIbanChar(c rune) bool {
-    return ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z')
+    return unicode.IsDigit(c) || unicode.IsUpper(c)
 }
 
 // Not safe to call before checkIbanAtLeast4char
