@@ -52,7 +52,7 @@ func checkIbanCountryCode(iban string) error {
 func checkIbanCorrectLength(iban string) error {
 	countryCode := getCountryFromIban(iban)
 	countryIbanIfo, _ := getCountriesIbanInfo()[countryCode];
-	if len(iban) != countryIbanIfo.length {
+	if len(iban) != countryIbanIfo.Length {
 		return errors.New("iban does not have a correct length")
 	}
 	return nil
