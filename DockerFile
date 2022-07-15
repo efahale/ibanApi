@@ -1,4 +1,5 @@
-FROM golang:1.16-alpine
+FROM golang:1.16-alpine AS build
+ENV CGO_ENABLED=0
 WORKDIR /app
 
 COPY go.mod .
@@ -9,5 +10,11 @@ COPY *.go .
 COPY *.json .
 RUN go build -o /ibanApi
 
+FROM gcr.io/distroless/base-debian10
+WORKDIR /
+COPY --from=build /ibanApi ibanApi
+COPY --from=build /app/iban_countries_info.json iban_countries_info.json
+
 EXPOSE 8080
-CMD [ "/ibanApi" ]
+USER nonroot:nonroot
+CMD ["/ibanApi"]
